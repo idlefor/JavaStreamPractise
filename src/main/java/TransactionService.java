@@ -191,8 +191,24 @@ public class TransactionService {
     /** Groups transactions by currency. */
     public Map<String, List<Transaction>> groupByCurrency(List<Transaction> txns) {
         if (txns == null || txns.isEmpty()) return Collections.emptyMap();
+
         return txns.stream()
                 .collect(Collectors.groupingBy(Transaction::currency));
+    }
+
+    public Map<String, Map<String, List<Transaction>>> groupByCurrencyDescThenStatusAsc(List<Transaction> txns) {
+        if (txns == null || txns.isEmpty()) return Collections.emptyMap();
+
+        return txns.stream()
+                .collect(Collectors.groupingBy(
+                        Transaction::currency,
+                        () -> new TreeMap<>(Comparator.reverseOrder()), // Level 1: Currency DESC
+                        Collectors.groupingBy(
+                                Transaction::status,
+                                () -> new TreeMap<>(),                 // Level 2: Status ASC (default)
+                                Collectors.toList()
+                        )
+                ));
     }
 
     /** Counts number of transactions per status. */

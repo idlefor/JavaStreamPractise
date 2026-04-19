@@ -515,6 +515,18 @@ class TransactionServiceTest {
         void nullInput() {
             assertTrue(svc.groupByCurrency(null).isEmpty());
         }
+
+        @Test
+        @DisplayName("test group by current desc then status ascending")
+        void testGroupByCurrencyDescThenStatusAsc() {
+            var result = svc.groupByCurrencyDescThenStatusAsc(txns);
+
+            List<String> keys = new ArrayList<>(result.keySet());
+            // Reverse Alphabetical: USD (U) -> SGD (S) -> EUR (E)
+            assertEquals("USD", keys.get(0));
+            assertEquals("SGD", keys.get(1));
+            assertEquals("EUR", keys.get(2));
+        }
     }
 
     @Nested
